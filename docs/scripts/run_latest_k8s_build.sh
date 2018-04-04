@@ -1,15 +1,6 @@
 #!/bin/bash
 # Source: https://github.com/openshift/ansible-service-broker/blob/master/scripts/run_latest_k8s_build.sh
 
-unameOut="$(uname -s)"
-case "${unameOut}" in
-    Linux*)     machine=Linux;;
-    Darwin*)    machine=Mac;;
-    CYGWIN*)    machine=Cygwin;;
-    MINGW*)     machine=MinGw;;
-    *)          machine="UNKNOWN:${unameOut}"
-esac
-
 BROKER_URL="https://raw.githubusercontent.com/openshift/ansible-service-broker/master/"
 TEMPLATE_URL="${BROKER_URL}/templates"
 
