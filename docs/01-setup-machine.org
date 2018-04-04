@@ -34,11 +34,7 @@ kubectl create clusterrolebinding tiller-cluster-admin --clusterrole=cluster-adm
 helm repo add svc-cat https://svc-catalog-charts.storage.googleapis.com
 
 # Installs the service catalog helm install svc-cat/catalog --name catalog --namespace catalog
-helm install svc-cat/catalog --name catalog --namespace catalog
-
-# Wait until the catalog is ready before moving on
-until kubectl get pods -n catalog -l app=catalog-catalog-apiserver | grep 2/2; do sleep 1; done
-until kubectl get pods -n catalog -l app=catalog-catalog-controller-manager | grep 1/1; do sleep 1; done
+helm install --wait svc-cat/catalog --name catalog --namespace catalog
 
 ./scripts/run_latest_k8s_build.sh
 #+END_SRC
@@ -51,15 +47,6 @@ until kubectl get pods -n catalog -l app=catalog-catalog-controller-manager | gr
 #+BEGIN_SRC bash :tangle scripts/run_latest_k8s_build.sh :exports code :tangle-mode (identity #o755)
 #!/bin/bash
 # Source: https://github.com/openshift/ansible-service-broker/blob/master/scripts/run_latest_k8s_build.sh
-
-unameOut="$(uname -s)"
-case "${unameOut}" in
-    Linux*)     machine=Linux;;
-    Darwin*)    machine=Mac;;
-    CYGWIN*)    machine=Cygwin;;
-    MINGW*)     machine=MinGw;;
-    *)          machine="UNKNOWN:${unameOut}"
-esac
 
 BROKER_URL="https://raw.githubusercontent.com/openshift/ansible-service-broker/master/"
 TEMPLATE_URL="${BROKER_URL}/templates"
