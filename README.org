@@ -1,0 +1,3 @@
+* Ansible Service Broker Workshop 
+
+- [[./docs/01-setup-machine.org][Setting up Environment]]
