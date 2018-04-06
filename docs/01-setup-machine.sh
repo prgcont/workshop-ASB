@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 # Adjust the version to your liking. Follow installation docs
 # at https://github.com/kubernetes/minikube.
