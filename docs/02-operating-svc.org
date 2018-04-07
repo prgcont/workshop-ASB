@@ -1,0 +1,11 @@
+* Operating Service Catalog
+** Deploy etherpad
+#+BEGIN_SRC bash
+oc new-project etherpad
+
+# List available classes
+svcat get classes
+
+# Create instance of class dh-etherpad-apb
+svcat provision etherpad-test --class dh-etherpad-apb
+#+END_SRC
