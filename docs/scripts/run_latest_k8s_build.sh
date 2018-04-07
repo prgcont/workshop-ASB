@@ -36,10 +36,10 @@ EOF
 
 function ansible-service-broker {
     if [ "$TAG" == "build" ]; then
-	make build-image TAG="${TAG}"
-	sed -i 's/origin-ansible-service-broker:latest/origin-ansible-service-broker:'"$TAG"'/g' /tmp/k8s-variables.yaml
+      make build-image TAG="${TAG}"
+      sed -i 's/origin-ansible-service-broker:latest/origin-ansible-service-broker:'"$TAG"'/g' /tmp/k8s-variables.yaml
     elif [ -n "$TAG" ]; then
-	sed -i 's/origin-ansible-service-broker:latest/origin-ansible-service-broker:'"$TAG"'/g' /tmp/k8s-variables.yaml
+      sed -i 's/origin-ansible-service-broker:latest/origin-ansible-service-broker:'"$TAG"'/g' /tmp/k8s-variables.yaml
     fi
 
     sed -i 's/tag: latest/tag: canary/g' /tmp/k8s-variables.yaml
