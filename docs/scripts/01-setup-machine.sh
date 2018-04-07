@@ -16,4 +16,4 @@ helm repo add svc-cat https://svc-catalog-charts.storage.googleapis.com
 # Installs the service catalog helm install svc-cat/catalog --name catalog --namespace catalog
 helm install --wait svc-cat/catalog --name catalog --namespace catalog
 
-./scripts/run_latest_k8s_build.sh
+./run_latest_k8s_build.sh
