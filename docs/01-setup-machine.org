@@ -59,6 +59,6 @@ minishift addons enable admin-user
 minishift config set openshift-version v3.9.0
 export MINISHIFT_ENABLE_EXPERIMENTAL=y
 minishift config set iso-url centos
-minishift start --service-catalog
+minishift start --memory 4GB --service-catalog
 eval $(minishift docker-env)
 #+END_SRC

@@ -3,9 +3,15 @@
 #+BEGIN_SRC bash
 oc new-project etherpad
 
-# List available classes
+# List available classes and brokers, wait until class "dh-etherpad-apb" is ready
+# check using:
 svcat get classes
+svcat get brokers
 
 # Create instance of class dh-etherpad-apb
 svcat provision etherpad-test --class dh-etherpad-apb
+
+# check deployment progress
+svcat get instances
+kubectl get po -n etherpad -w
 #+END_SRC
