@@ -32,7 +32,6 @@ Kubernetes environment with ASB (Ansible Service Broker) will be installed on yo
   - Verify
 - [[https://docs.helm.sh/using_helm/#install-helm][Install the helm]] binary
 - [[https://github.com/kubernetes-incubator/service-catalog/blob/master/docs/install.md#installing-the-service-catalog-cli][Install the svcat]] binary
-- Clone the [[https://github.com/openshift/ansible-service-broker][Service Broker GitHub repository]]
 
 ** Start Openshift and Ansible Service Broker
 
@@ -49,7 +48,7 @@ minishift addons enable ansible-service-broker
 **** Admin add-on
 Add admin user add-ons
 #+BEGIN_SRC bash
-minishift addons install --default
+minishift addons install --defaults
 minishift addons enable admin-user
 #+END_SRC
 

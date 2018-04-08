@@ -1,17 +1,24 @@
 * Operating Service Catalog
 ** Deploy etherpad
 #+BEGIN_SRC bash
-oc new-project etherpad
+oc new-project workshop-hello-world
 
 # List available classes and brokers, wait until class "dh-etherpad-apb" is ready
 # check using:
 svcat get classes
 svcat get brokers
 
-# Create instance of class dh-etherpad-apb
-svcat provision etherpad-test --class dh-etherpad-apb
+# Create instance of class dh-hello-world-apb
+svcat provision hello-prgcont --class dh-hello-world-apb
 
 # check deployment progress
 svcat get instances
-kubectl get po -n etherpad -w
+kubectl get po -n workshop-hello-world -w
+
+# Provision postgresql db
+svcat provision postgresql --class dh-postgresql-apb --plan dev -p postgresql_password=admin -p postgresql_database=admin -p postgresql_user=admin
+
+# Bind postgresql to hello-prgcont app
+svcat bind postgresql # Create binding
+
 #+END_SRC
