@@ -1,5 +1,5 @@
 * Operating Service Catalog
-** Deploy etherpad
+** Deploy hello-world app
 #+BEGIN_SRC bash
 oc new-project workshop-hello-world
 
@@ -18,7 +18,66 @@ kubectl get po -n workshop-hello-world -w
 # Provision postgresql db
 svcat provision postgresql --class dh-postgresql-apb --plan dev -p postgresql_password=admin -p postgresql_database=admin -p postgresql_user=admin
 
-# Bind postgresql to hello-prgcont app
-svcat bind postgresql # Create binding
+#+END_SRC
 
+*** Bind postgresql to hello-prgcont app
+Create binding via =svcat=
+#+BEGIN_SRC bash
+svcat bind postgresql
+#+END_SRC
+
+Verify that there is new secret =postgresql= in
+#+BEGIN_SRC bash
+oc get secret
+#+END_SRC
+
+**** Attach secret to =hello-prgcont= app  via web console
+Find console URL: =oc status=
+Go to Secrets -> =postresql= -> "Add to Application" -> Select =hello-prgcont= and "Environment variables"
+
+=hello-prgcont= app deployment should automatically redeploy by the end of this step and.
+Check the status of =hello-prgcont= app.
+
+**** Attach secret to =hello-prgcont= app using =PodPreset= object
+
+Update label =app: hello-world-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX= with name of your deployment (=oc get deploymentconfig=)
+Update admission PodPreset rules with object below.
+
+File: podpreset-db.yml
+#+BEGIN_SRC bash
+cat > podpreset-db.yml <<EOF
+---
+kind: PodPreset
+apiVersion: settings.k8s.io/v1alpha1
+metadata:
+  name: allow-database
+spec:
+  selector:
+    matchLabels:
+      app: hello-world-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+  envFrom:
+    - secretRef:
+        name: postgresql
+EOF
+
+oc apply -f ./podpreset-db.yml
+#+END_SRC
+
+Force application update by deleting currently running pod.
+
+#+BEGIN_SRC bash
+oc delete po $(oc get po | grep hello-world | awk '{print $1}')
+#+END_SRC
+
+Observe configuration of newly spawned pod:
+
+#+BEGIN_SRC bash
+oc get po $(oc get po | grep hello-world | awk '{print $1}') -o yaml
+#+END_SRC
+
+** Destroy hello-world app
+
+Delete namespace =workshop-hello-world=
+#+BEGIN_SRC
+oc delete namespace hello-world
 #+END_SRC
