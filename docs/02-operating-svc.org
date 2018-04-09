@@ -1,7 +1,14 @@
 * Operating Service Catalog
+** Prepare environment
+
+- Follow setup steps from Setup [[./01-setup-machine.org][Setting up Environment]] section.
+- Login to Openshift cluster:
+  - =oc login -u admin -p admin=
+- Create new namespace using =oc= tool
+  - =oc new-project workshop-hello-world=
+
 ** Create ServiceInstance of hello-world app
 #+BEGIN_SRC bash
-oc new-project workshop-hello-world
 
 # List available classes and brokers, wait until class "dh-etherpad-apb" is ready
 # check using:
