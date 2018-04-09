@@ -1,4 +1,83 @@
 * Create Ansible Playbook Bundles
-** Creating Hello world ServiceClass
-** Creating Database ServiceClass
-** Binding
+
+We will create our own ServiceClasses in Ansible Service Broker and launch ServiceInstances from them.
+
+** Prepare environment
+
+- Follow setup steps from Setup [[./01-setup-machine.org][Setting up Environment]] section.
+- Login to Openshift cluster:
+  - =oc login -u admin -p admin=
+- Create new namespace using =oc= tool
+  - =oc new-project workshop-hello-apb=
+
+** Create ServiceClass for app hello-world
+*** Initialize epty apb directory
+
+#+BEGIN_SRC bash
+apb init hello-world-workshop
+#+END_SRC
+
+- Go to new directory =hello-world-workshop= and examine files:
+  - =Dockerfile=
+    - Dockerfile for image that will be used to create ServiceInstances
+  - =apb.yml=
+    - main definition for APB application, plans, parameters, etc.
+
+**** Update =com.redhat.apb.spec= spec
+Run =apb prepare= in =hello-world-workshop= directory.
+
+The =prepare= command will attach =base64= version of =app.yml= to link image to app definition.
+
+*** Test build and deployment of empty apb
+Again in =hello-world-workshop= directory run:
+
+#+BEGIN_SRC bash
+# Build docker image
+apb build
+
+eval $(minishift docker-env) # We need to connect to Docker daemon running in minishift
+
+# Push docker image to minishift
+apb push
+
+# List that apb is uploaded to Ansible Service Broker
+apb list
+#+END_SRC
+
+*** Update APB to run =hello-world= app
+- Examine files:
+  - =playbooks/provision.yml=
+  - =roles/provision-hello-world-workshop/tasks/main.yml=
+
+**** Update provisioning role
+Open file =roles/provision-hello-world-workshop/tasks/main.yml= and add following ansible tasks:
+
+DeploymentConfig for =hello-world= app:
+#+BEGIN_SRC yaml
+- name: create deployment config
+  openshift_v1_deployment_config:
+    name: my-test
+    namespace: '{{ namespace }}'
+    labels:
+      app: my-test
+      service: my-test
+    replicas: 1
+    selector:
+      app: my-test
+      service: my-test
+    spec_template_metadata_labels:
+      app: my-test
+      service: my-test
+    containers:
+    - env:
+      image: docker.io/ansibleplaybookbundle/hello-world:latest
+      name: my-test
+      ports:
+      - container_port: 8080
+        protocol: TCP
+#+END_SRC
+
+**** Update deprovisioning role
+
+** Create ServiceClass for postgresql
+** Deploy and bind services
