@@ -54,6 +54,7 @@ svcat provision postgresql --class dh-postgresql-apb --plan dev -p postgresql_pa
 #+END_SRC
 
 ** Bind postgresql to hello-app app
+See [[https://kubernetes.io/docs/concepts/service-catalog/#binding-to-a-managed-service][Kubernetes binding documentation]] for more details.
 
 Create binding via =svcat=:
 
