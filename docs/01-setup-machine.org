@@ -30,7 +30,6 @@ Kubernetes environment with ASB (Ansible Service Broker) will be installed on yo
     - ~sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm~
     - ~sudo yum -y install apb~
   - Verify
-- [[https://docs.helm.sh/using_helm/#install-helm][Install the helm]] binary
 - [[https://github.com/kubernetes-incubator/service-catalog/blob/master/docs/install.md#installing-the-service-catalog-cli][Install the svcat]] binary
 
 ** Start Openshift and Ansible Service Broker
