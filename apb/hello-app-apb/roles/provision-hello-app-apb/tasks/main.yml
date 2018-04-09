@@ -1,0 +1,61 @@
+---
+
+- name: create deployment config
+  openshift_v1_deployment_config:
+    name: hello-app-apb
+    namespace: '{{ namespace }}'
+    labels:
+      app: hello-app-apb
+      service: hello-app-apb
+    replicas: 1
+    selector:
+      app: hello-app-apb
+      service: hello-app-apb
+    spec_template_metadata_labels:
+      app: hello-app-apb
+      service: hello-app-apb
+    containers:
+    - env:
+      image: docker.io/ansibleplaybookbundle/hello-app-apb:latest
+      name: hello-app-apb
+      ports:
+      - container_port: 8080
+        protocol: TCP
+
+
+##############################################################################
+## A Kubernetes service serves as an internal load balancer.  It identifies a
+## set of replicated pods in order to proxy the connections it receives to them.
+## https://docs.openshift.org/latest/architecture/core_concepts/pods_and_services.html#services
+##############################################################################
+- name: create hello-app-apb service
+  k8s_v1_service:
+    name: hello-app-apb
+    namespace: '{{ namespace }}'
+    labels:
+      app: hello-app-apb
+      service: hello-app-apb
+    selector:
+      app: hello-app-apb
+      service: hello-app-apb
+    ports:
+      - name: web
+        port: 80
+        target_port: 8080
+
+
+##############################################################################
+## An OpenShift Origin route exposes a service at a host name, so that external
+## clients can reach it by name. Each route consists of a name, a service
+## selector, and an optional security configuration.
+## https://docs.openshift.org/latest/architecture/core_concepts/routes.html
+##############################################################################
+- name: create hello-app-apb route
+  openshift_v1_route:
+    name: hello-app-apb
+    namespace: '{{ namespace }}'
+    labels:
+      app: hello-app-apb
+      service: hello-app-apb
+    to_name: hello-app-apb
+    spec_port_target_port: web
