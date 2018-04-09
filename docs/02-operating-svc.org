@@ -8,13 +8,23 @@
   - =oc new-project hello=
 
 ** Create ServiceInstance of hello-world app
+
+*** Wait until Ansible Service Broker is ready
+
 #+BEGIN_SRC bash
 
-# List available classes and brokers, wait until class "dh-etherpad-apb" is ready
+# List available classes and brokers, wait until class "dh-hello-world-apb" is ready
+# It can take some time before Ansible Service Broker starts up properly
+
 # check using:
 svcat get classes
 svcat get brokers
 
+#+END_SRC
+
+*** Create ServiceInstance using =svcat= tool
+
+#+BEGIN_SRC bash
 # Create instance of class dh-hello-world-apb
 svcat provision hello-app --class dh-hello-world-apb
 
@@ -23,21 +33,36 @@ svcat get instances
 kubectl get po -n hello -w
 #+END_SRC
 
+*** Explore what have been created
+
+#+BEGIN_SRC bash
+oc get all
+#+END_SRC
+
+Full documentation to [[https://kubernetes.io/docs/concepts/service-catalog/#provisioning-a-new-instance][Provisioning instances via Service-Catalog]]
+
 ** Create ServiceInstance of postgresql app
 
 #+BEGIN_SRC bash
+# Check if there is Service Class dh-postgresql-apb
+
+svcat get classes
+
 # Provision postgresql db
 svcat provision postgresql --class dh-postgresql-apb --plan dev -p postgresql_password=admin -p postgresql_database=admin -p postgresql_user=admin
+
 #+END_SRC
 
 ** Bind postgresql to hello-app app
 
-Create binding via =svcat=
+Create binding via =svcat=:
+
 #+BEGIN_SRC bash
 svcat bind postgresql
 #+END_SRC
 
-Verify that there is new secret =postgresql= in
+Verify that there is new secret =postgresql=:
+
 #+BEGIN_SRC bash
 oc get secret
 #+END_SRC
