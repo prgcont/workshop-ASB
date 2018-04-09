@@ -1,5 +1,5 @@
 * Operating Service Catalog
-** Deploy hello-world app
+** Create ServiceInstance of hello-world app
 #+BEGIN_SRC bash
 oc new-project workshop-hello-world
 
@@ -14,13 +14,17 @@ svcat provision hello-prgcont --class dh-hello-world-apb
 # check deployment progress
 svcat get instances
 kubectl get po -n workshop-hello-world -w
-
-# Provision postgresql db
-svcat provision postgresql --class dh-postgresql-apb --plan dev -p postgresql_password=admin -p postgresql_database=admin -p postgresql_user=admin
-
 #+END_SRC
 
-*** Bind postgresql to hello-prgcont app
+** Create ServiceInstance of postgresql app
+
+#+BEGIN_SRC bash
+# Provision postgresql db
+svcat provision postgresql --class dh-postgresql-apb --plan dev -p postgresql_password=admin -p postgresql_database=admin -p postgresql_user=admin
+#+END_SRC
+
+** Bind postgresql to hello-prgcont app
+
 Create binding via =svcat=
 #+BEGIN_SRC bash
 svcat bind postgresql
