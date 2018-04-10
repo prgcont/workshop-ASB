@@ -1,12 +1,11 @@
-* Fun practice for Home
-Here is a list of fun exercises that everyone can try at home.
+* Prove yourself!
 
-Don't forget to contribute back to us if you solved something interesting...
+There is a list of tasks you should accomplish to prove, that you really understand ASB and OpenShift/Kuberentes workshop.
 
 ** Golang challenge: Simplify app binding via svcat
 
 We've used =PodPreset= to map secrets generated from Bind to destination pod.
-Write a [[https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/][kubectl like plugin]] for [[https://github.com/kubernetes-incubator/service-catalog/tree/master/cmd/svcat][svcat]]
+Write a [[https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/][kubectl/oc like plugin]] for [[https://github.com/kubernetes-incubator/service-catalog/tree/master/cmd/svcat][svcat]]
 
 ** Ansible challenge:
 
