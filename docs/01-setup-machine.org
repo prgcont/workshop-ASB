@@ -1,5 +1,7 @@
 * Set up Environment
 
+LINK TO THIS REPO: https://bit.ly/2GPNhKz
+
 Kubernetes environment with ASB (Ansible Service Broker) will be installed on your machine at the end of this exercise.
 
 [Official Getting started docs](https://github.com/openshift/ansible-service-broker/blob/master/README.md) for Ansible Service Broker.
