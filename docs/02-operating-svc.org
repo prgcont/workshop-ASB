@@ -91,7 +91,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: hello-world-c6a79be3-0464-4dcb-95e6-c199d18a7c9d
+      app: hello-world-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
   envFrom:
     - secretRef:
         name: postgresql
