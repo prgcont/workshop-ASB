@@ -1,3 +1,6 @@
-* Ansible Service Broker Workshop 
+* Ansible Service Broker Workshop
 
 - [[./docs/01-setup-machine.org][Setting up Environment]]
+- [[./docs/02-operating-svc.org][Starting Application]]
+- [[./docs/03-ansible-playbook-bundles.org][Adding resrouces to Service Broker]]
+- [[./docs/04-home-exercises.org][Try this at Home]]

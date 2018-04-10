@@ -1,0 +1,14 @@
+* Fun practice for Home
+Here is a list of fun exercises that everyone can try at home.
+
+Don't forget to contribute back to us if you solved something interesting...
+
+** Golang challenge: Simplify app binding via svcat
+
+We've used =PodPreset= to map secrets generated from Bind to destination pod.
+Write a [[https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/][kubectl like plugin]] for [[https://github.com/kubernetes-incubator/service-catalog/tree/master/cmd/svcat][svcat]]
+
+** Ansible challenge:
+
+Write single task in role =my-pg-apb= that will take care of both provisioning and deprovisioning of resources.
+Reward is that you won't need to keep separate list of resources to be deleted and created.

@@ -5,35 +5,58 @@ Kubernetes environment with ASB (Ansible Service Broker) will be installed on yo
 [Official Getting started docs](https://github.com/openshift/ansible-service-broker/blob/master/README.md) for Ansible Service Broker.
 
 ** Prerequisites
-- [[https://kubernetes.io/docs/tasks/tools/install-minikube/][Install minikube]]
-  and kubectl. Make sure ~minikube start~ and ~minikube delete~ are
-  working.
-- [[https://docs.helm.sh/using_helm/#install-helm][Install the helm]] binary.
-- Clone the [[https://github.com/openshift/ansible-service-broker][broker's GitHub repository]]
-- Installed ~kvm~, ~virtualbox~ or ~hyperv~ for minikube provisioning 
-  - Either use default vm driver for minikube or config ~minikube~ to change it, e.g. for kvm2:
-    - ~minikube config set vm-driver kvm2~
+- Installed ~kvm~, ~virtualbox~ or ~hyperv~ (for minishift provisioning)
+- [[https://docs.openshift.org/latest/minishift/getting-started/installing.html][Install minishift]]
+  - MacOS
+    - ~brew cask install minishift~
+  - Other
+    - Download package for your OS from [[https://github.com/minishift/minishift/releases][minishift release page]]
+    - Unpack the archive and copy binary ~minishift~ to any location in you ~$PATH~
+  - Either use default vm-driver for minishift or config ~minishift~ to [[https://docs.openshift.org/latest/minishift/getting-started/setting-up-driver-plugin.html][alternative vm-driver]], e.g. for kvm:
+    - ~minishift config set vm-driver kvm~
+  - Make sure ~minishift start~ and ~minishift delete~ are working.
+- [[https://github.com/openshift/origin/releases/tag/v3.9.0][Install oc]] (v3.9.0) - ~kubectl~ like tool for Openshift
+- [[https://github.com/ansibleplaybookbundle/ansible-playbook-bundle/blob/master/docs/apb_cli.md#installing-the-apb-tool][Install apb ]](Ansible Playbook Bundle) tool either with
+  - Using Docker
+    - ~git clone https://github.com/ansibleplaybookbundle/ansible-playbook-bundle.git~
+    - ~YOUR_PATH_DIR=~/bin~
+    - ~PATH=${YOUR_PATH_DIR}:${PATH}~
+    - ~cp ansible-playbook-bundle/scripts/apb-docker-run.sh ${YOUR_PATH_DIR}/apb && chmod +x ${YOUR_PATH_DIR}/apb~
+  - Using RPM (Fedora 26/27)
+    - ~sudo dnf -y install dnf-plugins-core~
+    - ~sudo dnf -y copr enable @ansible-service-broker/ansible-service-broker-latest~
+    - ~sudo dnf -y install apb~
+  - Using RPM (Centos 7)
+    - ~sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm~
+    - ~sudo yum -y install apb~
+  - Verify
+- [[https://github.com/kubernetes-incubator/service-catalog/blob/master/docs/install.md#installing-the-service-catalog-cli][Install the svcat]] binary
 
-** Setup minikube 
+** Start Openshift and Ansible Service Broker
 
-#+BEGIN_SRC bash :tangle 01-setup-machine.sh :exports none :tangle-mode (identity #o755)
-#!/bin/bash 
+*** Enable Add-ons
+**** Ansible Service Broker add-on
 
-# Adjust the version to your liking. Follow installation docs
-# at https://github.com/kubernetes/minikube.
-minikube start --bootstrapper kubeadm --kubernetes-version v1.9.4
+Clone and install Ansible Service Broker add-on:
+#+BEGIN_SRC bash
+git clone https://github.com/minishift/minishift-addons.git
+minishift addons install minishift-addons/add-ons/ansible-service-broker
+minishift addons enable ansible-service-broker
+#+END_SRC
 
-# Install helm and tiller. See documentation for obtaining the helm
-# binary. https://docs.helm.sh/using_helm/#install-helm
-helm init --wait
+**** Admin add-on
+Add admin user add-ons
+#+BEGIN_SRC bash
+minishift addons install --defaults
+minishift addons enable admin-user
+#+END_SRC
 
-kubectl create clusterrolebinding tiller-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
+*** Configure and start minishift
 
-# Adds the chart repository for the service catalog
-helm repo add svc-cat https://svc-catalog-charts.storage.googleapis.com
-
-# Installs the service catalog helm install svc-cat/catalog --name catalog --namespace catalog
-helm install --wait svc-cat/catalog --name catalog --namespace catalog
-
-./scripts/run_latest_k8s_build.sh
+#+BEGIN_SRC bash
+minishift config set openshift-version v3.9.0
+export MINISHIFT_ENABLE_EXPERIMENTAL=y
+minishift config set iso-url centos
+minishift start --memory 4GB --service-catalog
+eval $(minishift docker-env)
 #+END_SRC

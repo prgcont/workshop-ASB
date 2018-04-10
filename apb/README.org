@@ -1,0 +1,2 @@
+* Ansible Playbook bundes
+This directory contains Ansible Playbook bundles used during workshop.

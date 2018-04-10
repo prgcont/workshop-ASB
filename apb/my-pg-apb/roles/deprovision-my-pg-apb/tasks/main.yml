@@ -1,0 +1,15 @@
+
+- k8s_v1_service:
+    name: my-pg
+    namespace: '{{ namespace }}'
+    state: absent
+
+- openshift_v1_deployment_config:
+    name: my-pg
+    namespace: '{{ namespace }}'
+    state: absent
+
+- k8s_v1_persistent_volume_claim:
+    name: my-pg
+    namespace: '{{ namespace }}'
+    state: absent

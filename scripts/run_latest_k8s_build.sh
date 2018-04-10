@@ -1,6 +1,12 @@
 #!/bin/bash
 # Source: https://github.com/openshift/ansible-service-broker/blob/master/scripts/run_latest_k8s_build.sh
 
+unameOut="$(uname -s)"
+case "${unameOut}" in
+  Darwin*)    BASE64_WRAP_OPTION="-b";;
+  *)          BASE64_WRAP_OPTION="-w";;
+esac
+
 BROKER_URL="https://raw.githubusercontent.com/openshift/ansible-service-broker/master/"
 TEMPLATE_URL="${BROKER_URL}/templates"
 
@@ -13,7 +19,7 @@ TAG="${TAG:-}"
 function create-broker-resource {
     mkdir -p /tmp/asb-cert
     openssl req -nodes -x509 -newkey rsa:4096 -keyout /tmp/asb-cert/key.pem -out /tmp/asb-cert/cert.pem -days 365 -subj "/CN=asb.ansible-service-broker.svc"
-    broker_ca_cert=$(cat /tmp/asb-cert/cert.pem | base64 -b 0)
+    broker_ca_cert=$(cat /tmp/asb-cert/cert.pem | base64 ${BASE64_WRAP_OPTION} 0)
     kubectl create secret tls asb-tls --cert="/tmp/asb-cert/cert.pem" --key="/tmp/asb-cert/key.pem" -n ansible-service-broker
     client_token=$(kubectl get sa ansibleservicebroker-client -o yaml | grep -w ansibleservicebroker-client-token | grep -o 'ansibleservicebroker-client-token.*$')
     broker_auth='{ "bearer": { "secretRef": { "kind": "Secret", "namespace": "ansible-service-broker", "name": "REPLACE_TOKEN_STRING" } } }'
@@ -36,10 +42,10 @@ EOF
 
 function ansible-service-broker {
     if [ "$TAG" == "build" ]; then
-	make build-image TAG="${TAG}"
-	sed -i 's/origin-ansible-service-broker:latest/origin-ansible-service-broker:'"$TAG"'/g' /tmp/k8s-variables.yaml
+      make build-image TAG="${TAG}"
+      sed -i 's/origin-ansible-service-broker:latest/origin-ansible-service-broker:'"$TAG"'/g' /tmp/k8s-variables.yaml
     elif [ -n "$TAG" ]; then
-	sed -i 's/origin-ansible-service-broker:latest/origin-ansible-service-broker:'"$TAG"'/g' /tmp/k8s-variables.yaml
+      sed -i 's/origin-ansible-service-broker:latest/origin-ansible-service-broker:'"$TAG"'/g' /tmp/k8s-variables.yaml
     fi
 
     sed -i 's/tag: latest/tag: canary/g' /tmp/k8s-variables.yaml

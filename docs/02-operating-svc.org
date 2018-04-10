@@ -1,0 +1,120 @@
+* Operating Service Catalog
+** Prepare environment
+
+- Follow setup steps from Setup [[./01-setup-machine.org][Setting up Environment]] section.
+- Login to Openshift cluster:
+  - =oc login -u admin -p admin=
+- Create new namespace using =oc= tool
+  - =oc new-project hello=
+
+** Create ServiceInstance of hello-world app
+
+*** Wait until Ansible Service Broker is ready
+
+#+BEGIN_SRC bash
+
+# List available classes and brokers, wait until class "dh-hello-world-apb" is ready
+# It can take some time before Ansible Service Broker starts up properly
+
+# check using:
+svcat get classes
+svcat get brokers
+
+#+END_SRC
+
+*** Create ServiceInstance using =svcat= tool
+
+#+BEGIN_SRC bash
+# Create instance of class dh-hello-world-apb
+svcat provision hello-app --class dh-hello-world-apb
+
+# check deployment progress
+svcat get instances
+kubectl get po -n hello -w
+#+END_SRC
+
+*** Explore what have been created
+
+#+BEGIN_SRC bash
+oc get all
+#+END_SRC
+
+Full documentation to [[https://kubernetes.io/docs/concepts/service-catalog/#provisioning-a-new-instance][Provisioning instances via Service-Catalog]]
+
+** Create ServiceInstance of postgresql app
+
+#+BEGIN_SRC bash
+# Check if there is Service Class dh-postgresql-apb
+
+svcat get classes
+
+# Provision postgresql db
+svcat provision postgresql --class dh-postgresql-apb --plan dev -p postgresql_password=admin -p postgresql_database=admin -p postgresql_user=admin
+
+#+END_SRC
+
+** Bind postgresql to hello-app app
+See [[https://kubernetes.io/docs/concepts/service-catalog/#binding-to-a-managed-service][Kubernetes binding documentation]] for more details.
+
+Create binding via =svcat=:
+
+#+BEGIN_SRC bash
+svcat bind postgresql
+#+END_SRC
+
+Verify that there is new secret =postgresql=:
+
+#+BEGIN_SRC bash
+oc get secret
+#+END_SRC
+
+**** Attach secret to =hello-app= app  via web console
+Find console URL: =oc status=
+Go to Secrets -> =postresql= -> "Add to Application" -> Select =hello-app= and "Environment variables"
+
+=hello-app= app deployment should automatically redeploy by the end of this step and.
+Check the status of =hello-app= app.
+
+**** Attach secret to =hello-app= app using =PodPreset= object
+
+Update label =app: hello-world-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX= with name of your deployment (=oc get deploymentconfig=)
+Update admission PodPreset rules with object below.
+
+File: podpreset-db.yml
+#+BEGIN_SRC bash
+cat > podpreset-db.yml <<EOF
+---
+kind: PodPreset
+apiVersion: settings.k8s.io/v1alpha1
+metadata:
+  name: allow-database
+spec:
+  selector:
+    matchLabels:
+      app: hello-world-c6a79be3-0464-4dcb-95e6-c199d18a7c9d
+  envFrom:
+    - secretRef:
+        name: postgresql
+EOF
+
+oc apply -f ./podpreset-db.yml
+#+END_SRC
+
+Force application update by deleting currently running pod.
+
+#+BEGIN_SRC bash
+oc delete po $(oc get po | grep hello-world | awk '{print $1}')
+#+END_SRC
+
+Observe configuration of newly spawned pod:
+
+#+BEGIN_SRC bash
+oc get po $(oc get po | grep hello-world | awk '{print $1}') -o yaml
+#+END_SRC
+
+** Destroy hello-world app
+
+Delete namespace =hello=
+#+BEGIN_SRC
+oc delete namespace hello
+#+END_SRC
