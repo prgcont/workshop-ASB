@@ -10,6 +10,14 @@ We will create our own ServiceClasses in Ansible Service Broker and launch Servi
 - Create new namespace using =oc= tool
   - =oc new-project hello-apb=
 
+*** Create apb installation
+
+#+BEGIN_SRC bash
+virtualenv /var/tmp/apb
+source /var/tmp/apb/bin/activate
+pip install apb
+#+END_SRC
+
 ** Create ServiceClass for app hello-world
 *** Initialize empty =apb= directory
 
