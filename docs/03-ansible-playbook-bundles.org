@@ -71,7 +71,7 @@ DeploymentConfig for =hello-app-apb= app:
       service: hello-app-apb
     containers:
     - env:
-      image: docker.io/ansibleplaybookbundle/hello-app-apb:latest
+      image: docker.io/ansibleplaybookbundle/hello-world:latest
       name: hello-app-apb
       ports:
       - container_port: 8080
