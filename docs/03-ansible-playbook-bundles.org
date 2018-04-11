@@ -172,7 +172,7 @@ oc get route
 apb init my-pg-apb --bindable
 #+END_SRC
 
-Go to =my-pg-apb= dir and update =app.yml= with:
+Go to =my-pg-apb= dir and update =apb.yml= with:
 
 #+BEGIN_SRC yaml
 version: 1.0
